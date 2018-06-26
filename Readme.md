@@ -1,6 +1,8 @@
 ## News 
 
 - (6/25/18) result.csv has `Add` events calculated
+- (6/26/18) result.csv has `Connect` events calculated
+- (6/26/18) result.csv has `Community` events calculated
 
 ## Expected Data Format
 
@@ -20,12 +22,12 @@
 ## Data Conversion Issues
 
 Iterate through all 2048 rows
-- Generate `Add` event if `graphWeight` increases
-- Generate `Connect` once per iteration. Connect `vertexA` to `vertexB`
+- Generate `Add` event if `graphOrder` increases
+- Generate `Connect` event once per iteration. Connect `vertexA` to `vertexB`
 - Generate `Community` event from checking if `vertexNewCommunity` and `vertexOldCommunity` has changed.
 - Generate `Role` event from comparing `vertexARole` with that node's role.  The default role is `none`
 
 ## Questions
-- why does the graph start with `graphWeight` of 1?  Two nodes are introduced in first iteration ( 1, 22) respectively
+- What is `graphWeight` vs `graphOrder`
 - need to figure out what `edge_leaf_AB` and `edge_leaf_BA` means
 - Sometimes the graph weight increases by more than 1.  How can this happen if only one node is added during each time step?
