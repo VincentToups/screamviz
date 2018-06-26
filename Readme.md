@@ -1,8 +1,11 @@
 ## News 
 
+result.csv adheres to expected data format and is ready to visualize!  
+
 - (6/25/18) result.csv has `Add` events calculated
 - (6/26/18) result.csv has `Connect` events calculated
 - (6/26/18) result.csv has `Community` events calculated
+- (6/26/18) result.csv has `Role` events calculated
 
 ## Expected Data Format
 

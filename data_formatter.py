@@ -15,20 +15,28 @@ def generateConnectEvent(dataframe, node, target, time):
 def generateCommunityEvent(dataframe, node, target, time):
   return dataframe.append({'Node':node, 'Event':'Community', 'Target': target, 'Time':time}, ignore_index=True)
 
+def generateRoleEvent(dataframe, node, target, time):
+  return dataframe.append({'Node':node, 'Event':'Role', 'Target': target, 'Time':time}, ignore_index=True)
+
 # Read from CSV
 d = pd.read_csv('./doc/sample_scream_output.csv')
 # Trim white space in column names.  Not optimized
 for i in range(d.columns.size):
   d = d.rename(columns={d.columns[i]: d.columns[i].strip()})
 
+nodesCount = d.vertexA[d.index._stop - 1]
 # Initialize Resultant DataFrame with first two nodes
 result = pd.DataFrame({'Node':[1, d.vertexB[0]], 'Event':['Add', 'Add'], 'Target': [np.NAN, np.NAN], 'Time': [0, d.timestamp[0]] })
 
+# Initialize Role Tracker
+roles = [''] * (nodesCount + 1)
 for i in range(0, d.index._stop):
   prev = max(i-1,0)
-  _nodeA = d.vertexA[i]
-  _nodeB = d.vertexB[i]
-  _timestamp= d.timestamp[i]
+  _nodeA         = d.vertexA[i]
+  _nodeB         = d.vertexB[i]
+  _roleA         = d.vertexARole[i]
+  _roleB         = d.vertexBRole[i]
+  _timestamp     = d.timestamp[i]
   _communityOldA = d.vertexAOldCommunity[i].strip()
   _communityOldB = d.vertexBOldCommunity[i].strip()
   _communityNewA = d.vertexANewCommunity[i]
@@ -41,6 +49,14 @@ for i in range(0, d.index._stop):
     result = generateCommunityEvent(result, node=_nodeA, target=_communityNewA, time=_timestamp)
   if(_communityOldB == '-1'):
     result = generateCommunityEvent(result, node=_nodeB, target=_communityNewB, time=_timestamp)
+  if(_roleA != roles[_nodeA]):
+    result = generateRoleEvent(result, node=_nodeA, target=_roleA, time=_timestamp)
+  if(_roleB != roles[_nodeB]):
+    result = generateRoleEvent(result, node=_nodeB, target=_roleB, time=_timestamp)
   result = generateConnectEvent(result, node=_nodeA, target=_nodeB, time=_timestamp)
+
+  # Track Roles
+  roles[_nodeA] = _roleA
+  roles[_nodeB] = _roleB
 
 result.to_csv('result.csv')
