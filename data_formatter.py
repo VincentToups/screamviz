@@ -47,16 +47,16 @@ for i in range(0, d.index._stop):
     result = generateAddEvent(result, node=_nodeB, time=_timestamp)
     nodes.append(_nodeA)
     nodes.append(_nodeB)
-    print('timestamp: '.__add__(str(_timestamp)).__add__(' NodeA: ').__add__(str(_nodeA)).__add__(' NodeB: ').__add__(str(_nodeB)))
+    # print('timestamp: '.__add__(str(_timestamp)).__add__(' NodeA: ').__add__(str(_nodeA)).__add__(' NodeB: ').__add__(str(_nodeB)))
   elif(d.graphOrder[i]- d.graphOrder[prev] > 0):
     if(nodes.__contains__(_nodeA)):
       result = generateAddEvent(result, node=_nodeB, time=_timestamp)
       nodes.append(_nodeB)
-      print('timestamp: '.__add__(str(_timestamp)).__add__(' NodeB: ').__add__(str(_nodeB)))
+      # print('timestamp: '.__add__(str(_timestamp)).__add__(' NodeB: ').__add__(str(_nodeB)))
     else:
       result = generateAddEvent(result, node=_nodeA, time=_timestamp)
       nodes.append(_nodeA)
-      print('timestamp: '.__add__(str(_timestamp)).__add__(' NodeA: ').__add__(str(_nodeA)))
+      # print('timestamp: '.__add__(str(_timestamp)).__add__(' NodeA: ').__add__(str(_nodeA)))
   if(_communityOldA == '-1'):
     result = generateCommunityEvent(result, node=_nodeA, target=_communityNewA, time=_timestamp)
   if(_communityOldB == '-1'):
