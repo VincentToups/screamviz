@@ -1,4 +1,4 @@
-row,Event,Node,Target,Time
+,Event,Node,Target,Time
 0,Add,1,,0
 1,Add,9,,1
 2,Community,1, 9_1_0,1
@@ -6,7 +6,7 @@ row,Event,Node,Target,Time
 4,Role,1, ROLE_LONER,1
 5,Role,9, ROLE_LONER,1
 6,Connect,1,9,1
-7,Add,1,,2
+7,Add,13,,2
 8,Community,13, 9_1_0,2
 9,Role,1, ROLE_AMBASSADOR,2
 10,Role,13, ROLE_LONER,2
@@ -505,7 +505,7 @@ row,Event,Node,Target,Time
 503,Connect,9,89,141
 504,Role,90, ROLE_NONE,142
 505,Connect,9,90,142
-506,Add,9,,143
+506,Add,94,,143
 507,Community,94, 9_1_0,143
 508,Role,9, ROLE_AMBASSADOR,143
 509,Role,94, ROLE_LONER,143
