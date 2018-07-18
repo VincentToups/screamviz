@@ -30,6 +30,7 @@ result = pd.DataFrame({'Node':[1, d.vertexB[0]], 'Event':['Add', 'Add'], 'Target
 
 # Initialize Role Tracker
 roles = [''] * (nodesCount + 1)
+nodes = []
 for i in range(0, d.index._stop):
   prev = max(i-1,0)
   _nodeA         = d.vertexA[i]
@@ -41,10 +42,18 @@ for i in range(0, d.index._stop):
   _communityOldB = d.vertexBOldCommunity[i].strip()
   _communityNewA = d.vertexANewCommunity[i]
   _communityNewB = d.vertexBNewCommunity[i]
-  if(d.graphOrder[i]- d.graphOrder[prev] > 0):
-    result = generateAddEvent(result, node=_nodeB, time=_timestamp)
   if(d.graphOrder[i] - d.graphOrder[prev] > 1):
     result = generateAddEvent(result, node=_nodeA, time=_timestamp)
+    result = generateAddEvent(result, node=_nodeB, time=_timestamp)
+    nodes.append(_nodeA)
+    nodes.append(_nodeB)
+  elif(d.graphOrder[i]- d.graphOrder[prev] > 0):
+    if(nodes.__contains__(_nodeA)):
+      result = generateAddEvent(result, node=_nodeB, time=_timestamp)
+      nodes.append(_nodeB)
+    else:
+      result = generateAddEvent(result, node=_nodeA, time=_timestamp)
+      nodes.append(_nodeA)
   if(_communityOldA == '-1'):
     result = generateCommunityEvent(result, node=_nodeA, target=_communityNewA, time=_timestamp)
   if(_communityOldB == '-1'):
