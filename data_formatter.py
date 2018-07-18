@@ -70,5 +70,5 @@ for i in range(0, d.index._stop):
   # Track Roles
   roles[_nodeA] = _roleA
   roles[_nodeB] = _roleB
-
+result.
 result.to_csv('result.csv')
