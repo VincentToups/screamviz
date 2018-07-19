@@ -34,3 +34,36 @@ Iterate through all 2048 rows
 - What is `graphWeight` vs `graphOrder`
 - need to figure out what `edge_leaf_AB` and `edge_leaf_BA` means
 - Sometimes the graph weight increases by more than 1.  How can this happen if only one node is added during each time step?
+
+## Running the Visualization
+
+You'll need nodejs, browserify, beefy. 
+
+```
+
+<install node and npm>
+
+npm install -g beefy browserify
+
+```
+
+Then we need to setup the local project
+
+```
+
+npm install 
+
+```
+
+Then
+
+```
+
+beefy main.js:bundle.js
+
+```
+
+This will start a server, probably at localhost:9966
+
+Open that in your browser.
+

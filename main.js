@@ -14,6 +14,7 @@ const nodesTable = {};
 var minTime = Infinity;
 var maxTime = -Infinity;
 
+
 function promiseData(){
     return d3.csv("./result.csv",function(row){
         let out = {};
@@ -77,13 +78,45 @@ function byEvent(a,b){
     return eventOrderTable[a.event]-eventOrderTable[b.event];    
 }
 
+function r255(){
+    return Math.floor(Math.random()*255);
+}
+
+function randomRgb(){
+    return "rgb("+[r255(),r255(),r255()]+")";
+}
+
+function parseRgb(rgb){
+    let p1 = rgb.split(",");
+    let p1p = p1[0].split("(");
+    let p3p = p1[2].split(")");
+    return [+p1p[1],+p1[1],+p3p[0]];
+}
+
+function unparseRgb(a){
+    return "rgb("+a.join(",")+")";
+}
+
+function interpRgb(a,b,p){
+    let pa = parseRgb(a);
+    let pb = parseRgb(b);
+    let q = (p-1);
+    return unparseRgb([q*pa[0]+p*pb[0],
+                       q*pa[1]+p*pb[1],
+                       q*pa[2]+p*pb[2]]);
+}
+
 Promise.all([promiseDOM(),promiseData()])
     .spread((document,data)=>{
         console.log(data);
         const roles = Object.keys(rolesTable).sort();
         const communities = Object.keys(communityTable).sort();
+        const communityColors = {};
+        communities.forEach(c => communityColors[c]=randomRgb());
+        communityColors["none"] = "rgb(0,0,0)";
         const nodes = Object.keys(nodesTable).map(_=>+_).sort(numerically);
-        const byTime = groupBy(data,ixc("time"));
+        const byTime = groupBy(data,ixc("row"));
+        console.log(byTime);
         const times = [];
         for(let i = minTime; i <= maxTime; i++){
             times.push(i);
@@ -92,7 +125,6 @@ Promise.all([promiseDOM(),promiseData()])
         const width = svg.attr("width");
         const height = svg.attr("height");
 
-        var color = d3.scaleOrdinal(d3.schemeCategory20);
 
         var node_data = [];
         var link_data = [];
@@ -103,39 +135,175 @@ Promise.all([promiseDOM(),promiseData()])
                 .force("charge", d3.forceManyBody())
                 .force("center", d3.forceCenter(width / 2, height / 2));
 
+        function dragstarted(d) {
+            if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+            d.fx = d.x;
+            d.fy = d.y;
+        }
+
+        function dragged(d) {
+            d.fx = d3.event.x;
+            d.fy = d3.event.y;
+        }
+
+        function dragended(d) {
+            if (!d3.event.active) simulation.alphaTarget(0);
+            d.fx = null;
+            d.fy = null;
+        }
+
+
         function loop(i){
+
             const events = byTime[times[i]].sort(byEvent);
             events.map(processEvent);
             update();
+            //            i = (i + 1) % times.length;
+            if(i < times.length - 1){
+                setTimeout(function(){
+                    loop(i+1);
+                },50);
+            }
         };
 
-        function update(){
-            
+        function nodeColor(d){
+            return communityColors[d.community];
         }
 
+        function ndkey(d){
+            return d ? d.id : ""+d.id;
+        }
+
+        function lkey(d){
+            return d ? d.id : [d.source,d.target].join(",");
+        }
+
+        svg.append("g")
+            .attr("class", "links");
+
+        svg.append("g")
+            .attr("class", "nodes");
+        
+        function update(){
+            var link = svg.select(".links")
+                    .selectAll("line")
+                    .data(link_data);
+
+            var link_enter = link
+                    .enter().append("line")
+                    .attr("stroke-width", function(d) { return 1; })
+                    .attr("stroke","black");
+
+            var link_all = link.merge(link_enter);
+            
+            var node = svg.select(".nodes")
+                    .selectAll("circle")
+                    .data(node_data);
+            var node_enter = node
+                    .enter()
+                    .append("circle")
+                    .attr("r", 5)
+                    .attr("fill", d => {
+                        console.log("On enter, d", nodeColor(d));
+                        d.targetFill = nodeColor(d);
+                        d.lastFill = d.targetFill;
+                        d.lastChange = -Infinity;
+                        console.log(d);
+                        return d.targetFill;
+                    })
+                    .call(d3.drag()
+                          .on("start", dragstarted)
+                          .on("drag", dragged)
+                          .on("end", dragended));
+            var node_all = node_enter.merge(node)
+                    .attr("r",5)
+                    .attr("targetFill", d => {
+                        let newNodeColor = nodeColor(d);
+                        console.log(newNodeColor,d.lastFill);
+                        if(d.targetFill !== newNodeColor){
+                            console.log("targetFill Changed",newNodeColor);
+                            d.lastFill = d.targetFill;
+                            d.targetFill = newNodeColor;
+                            d.lastChange = Date.now();
+                        }
+                        return d.lastFill;
+                    });
+
+            node.exit().remove();            
+            
+            simulation
+                .nodes(node_data)
+                .on("tick", ticked);
+            
+            simulation.force("link")
+                .links(link_data)
+                .id(d => d.id);
+
+            simulation.alphaTarget(0.3).restart();
+
+            let min = Math.min;
+            let max = Math.max;
+            function ticked() {
+                link_all
+                    .attr("x1", function(d) { return d.source.x; })
+                    .attr("y1", function(d) { return d.source.y; })
+                    .attr("x2", function(d) { return d.target.x; })
+                    .attr("y2", function(d) { return d.target.y; });
+                
+                node_all
+                    .attr("cx", function(d) { return d.x; })
+                    .attr("cy", function(d) { return d.y; })
+                    .attr("fill",function(d){
+                        let now = Date.now();
+                        let elapsed = max(min((now - d.lastChange)/250,1),0);
+                        if(isNaN(elapsed)){
+                            return d.lastFill;
+                        }
+                        if(elapsed < 1){
+                            console.log("interp",interpRgb(d.lastFill,d.targetFill,elapsed));                        
+                        }
+                        if(elapsed === 1){
+                            d.lastFill = d.targetFill;
+                        }
+                        return interpRgb(d.lastFill,d.targetFill,elapsed);
+                    });
+            }
+            
+        }
         function processEvent(e){
             ({
                 add:e => {
                     node_data.push({
-                        id:e.target,
+                        id:e.node,
+                        id_n:e.node,
                         community:"none",
                         role:"none"
                     });
-                    node_index_map[e.target] = node_data.length-1;
+
+                    if(node_data.length > 1){
+                        let last = node_data.length - 2;
+                        let cur = node_data.length -1;
+                        node_data[cur].x = node_data[last].x ? node_data[last].x + Math.random()*20 : width/2;
+                        node_data[cur].y = node_data[last].y ? node_data[last].y + Math.random()*20 : height/2;
+                        
+                    }
+                    node_index_map[e.node] = node_data.length-1;
                 },
                 community: e => {
-                    let i = node_index_map[e.target];
+                    let i = node_index_map[e.node];
+                    if(node_data[i].community !== e.target) console.log("Community change",node_data[i],e.target);
                     node_data[i].community = e.target;
                 },
                 role: e => {
-                    let i = node_index_map[e.target];
+                    let i = node_index_map[e.node];
                     node_data[i].role = e.target;
                 },
                 connect: e => {
-                    link_data.push([e.node,e.target]);
+//                    console.log("connect",e.node,"to",e.target);
+                    link_data.push({source:e.node,target:e.target});
                 }
             })[e.event](e);
         }
-        
+        loop(0);
     });
 
