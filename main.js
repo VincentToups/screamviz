@@ -100,10 +100,15 @@ function unparseRgb(a){
 function interpRgb(a,b,p){
     let pa = parseRgb(a);
     let pb = parseRgb(b);
-    let q = (p-1);
+    let q = (1-p);
     return unparseRgb([q*pa[0]+p*pb[0],
                        q*pa[1]+p*pb[1],
                        q*pa[2]+p*pb[2]]);
+}
+
+function interpFloat(a,b,p){
+    var q = (1-p);
+    return a*q + b*p;
 }
 
 Promise.all([promiseDOM(),promiseData()])
@@ -191,7 +196,13 @@ Promise.all([promiseDOM(),promiseData()])
 
             var link_enter = link
                     .enter().append("line")
-                    .attr("stroke-width", function(d) { return 1; })
+                    .attr("stroke-width", function(d) {
+                        let n1 = node_data[node_index_map[d.source]];
+                        let n2 = node_data[node_index_map[d.target]];
+                        n1.lastChange = Date.now();
+                        n2.lastChange = Date.now();
+                        return 1;
+                    })
                     .attr("stroke","black");
 
             var link_all = link.merge(link_enter);
@@ -225,6 +236,7 @@ Promise.all([promiseDOM(),promiseData()])
                             d.lastFill = d.targetFill;
                             d.targetFill = newNodeColor;
                             d.lastChange = Date.now();
+                            d.targetSize = 5;
                         }
                         return d.lastFill;
                     });
@@ -266,6 +278,17 @@ Promise.all([promiseDOM(),promiseData()])
                             d.lastFill = d.targetFill;
                         }
                         return interpRgb(d.lastFill,d.targetFill,elapsed);
+                    })
+                    .attr("r",function(d){
+                        let now = Date.now();
+                        let elapsed = max(min((now - d.lastChange)/250,1),0);
+                        if(isNaN(elapsed)){
+                            return 5;
+                        }
+                        if(elapsed === 1){
+                            return 5;
+                        }
+                        return interpFloat(15,5,elapsed);
                     });
             }
             
@@ -283,8 +306,8 @@ Promise.all([promiseDOM(),promiseData()])
                     if(node_data.length > 1){
                         let last = node_data.length - 2;
                         let cur = node_data.length -1;
-                        node_data[cur].x = node_data[last].x ? node_data[last].x + Math.random()*20 : width/2;
-                        node_data[cur].y = node_data[last].y ? node_data[last].y + Math.random()*20 : height/2;
+                        node_data[cur].x = node_data[last].x ? width/2 : width/2;
+                        node_data[cur].y = node_data[last].y ? height/2 : height/2;
                         
                     }
                     node_index_map[e.node] = node_data.length-1;
