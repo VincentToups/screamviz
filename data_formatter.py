@@ -4,7 +4,7 @@ import numpy as np
 # prints all properties on an object
 def methods(obj):
   for property, value in vars(obj).iteritems():
-    print property, ": ", value
+    print(property, ": ", value)
 
 def generateAddEvent(dataframe, node, time):
   return dataframe.append({'Node':node, 'Event':'Add', 'Target': np.NAN, 'Time':time}, ignore_index=True)
@@ -57,9 +57,9 @@ for i in range(0, d.index._stop):
       result = generateAddEvent(result, node=_nodeA, time=_timestamp)
       nodes.append(_nodeA)
       # print('timestamp: '.__add__(str(_timestamp)).__add__(' NodeA: ').__add__(str(_nodeA)))
-  if(_communityOldA == '-1'):
+  if(_communityOldA != _communityNewA):
     result = generateCommunityEvent(result, node=_nodeA, target=_communityNewA, time=_timestamp)
-  if(_communityOldB == '-1'):
+  if(_communityOldB != _communityNewB):
     result = generateCommunityEvent(result, node=_nodeB, target=_communityNewB, time=_timestamp)
   if(_roleA != roles[_nodeA]):
     result = generateRoleEvent(result, node=_nodeA, target=_roleA, time=_timestamp)
@@ -70,5 +70,5 @@ for i in range(0, d.index._stop):
   # Track Roles
   roles[_nodeA] = _roleA
   roles[_nodeB] = _roleB
-result.
+
 result.to_csv('result.csv')
