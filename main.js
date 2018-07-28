@@ -14,6 +14,7 @@ const nodesTable = {};
 var minTime = Infinity;
 var maxTime = -Infinity;
 
+var visDuration = 2000;
 
 function promiseData(){
     return d3.csv("./result.csv",function(row){
@@ -167,7 +168,7 @@ Promise.all([promiseDOM(),promiseData()])
             if(i < times.length - 1){
                 setTimeout(function(){
                     loop(i+1);
-                },50);
+                },200);
             }
         };
 
@@ -267,7 +268,7 @@ Promise.all([promiseDOM(),promiseData()])
                     .attr("cy", function(d) { return d.y; })
                     .attr("fill",function(d){
                         let now = Date.now();
-                        let elapsed = max(min((now - d.lastChange)/250,1),0);
+                        let elapsed = max(min((now - d.lastChange)/visDuration,1),0);
                         if(isNaN(elapsed)){
                             return d.lastFill;
                         }
@@ -281,7 +282,7 @@ Promise.all([promiseDOM(),promiseData()])
                     })
                     .attr("r",function(d){
                         let now = Date.now();
-                        let elapsed = max(min((now - d.lastChange)/250,1),0);
+                        let elapsed = max(min((now - d.lastChange)/visDuration,1),0);
                         if(isNaN(elapsed)){
                             return 5;
                         }
