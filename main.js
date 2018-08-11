@@ -123,10 +123,6 @@ function interpRgb(a,b,p){
 		const nodes = Object.keys(nodesTable).map(_=>+_).sort(numerically);
 		const byTime = groupBy(data,ixc("row"));
 		console.log(byTime);
-		const times = [];
-		for(let i = minTime; i <= maxTime; i++){
-			times.push(i);
-		}
 		const svg = d3.select("#viz");
 		const width = svg.attr("width");
 		const height = svg.attr("height");
@@ -159,7 +155,7 @@ function interpRgb(a,b,p){
 		}
 		
 		
-		let TimeLapse = { pause: false }
+		let TimeLapse = { pause: false, animationSpeed: 200 }
 		window.resume = () => {
 			if(TimeLapse.pause){
 				console.log('Play', TimeLapse.iteration)
@@ -172,26 +168,24 @@ function interpRgb(a,b,p){
 			TimeLapse.pause = true
 		}
 
-		let _animationSpeed = 200
 		window.onSpeedChange = (value) => {
-			_animationSpeed = 500 - (50 * value)	
+			TimeLapse.animationSpeed = 500 - (50 * value)	
 		}
+		let getTime = (row) => data[row].time
 		function loop(i){
 			
 			if(TimeLapse.pause){
 				TimeLapse.iteration = i;
-				console.log('pause')
 				return
 			}
 
-			const events = byTime[times[i]].sort(byEvent);
+			const events = byTime[i].sort(byEvent);
 			events.map(processEvent);
 			update();
-			//            i = (i + 1) % times.length;
-			if(i < times.length - 1){
+			if(i < 7900){
 				setTimeout(function(){
 					loop(i+1);
-				},_animationSpeed);
+				},TimeLapse.animationSpeed);
 			}
 		};
 		
@@ -337,6 +331,7 @@ function interpRgb(a,b,p){
 					node_index_map[e.node] = node_data.length-1;
 				},
 				community: e => {
+					console.log()
 					let i = node_index_map[e.node];
 					if(node_data[i].community !== e.target) console.log("Community change",node_data[i],e.target);
 					node_data[i].community = e.target;
