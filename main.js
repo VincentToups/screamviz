@@ -137,9 +137,9 @@ function interpRgb(a,b,p){
 		var node_index_map = {};
 		
 		var simulation = d3.forceSimulation()
-		.force("link", d3.forceLink().id(function(d) { return d.community; }))
-		.force("charge", d3.forceManyBody())
-		.force("center", d3.forceCenter(width / 2, height / 2));
+			.force("link", d3.forceLink().id(function(d) { return d.community; }))
+			.force("charge", d3.forceManyBody())
+			.force("center", d3.forceCenter(width / 2, height / 2));
 		
 		function dragstarted(d) {
 			if (!d3.event.active) simulation.alphaTarget(0.3).restart();
@@ -167,9 +167,11 @@ function interpRgb(a,b,p){
 				loop(TimeLapse.iteration)
 			}
 		}
+
 		window.pause = () => {
 			TimeLapse.pause = true
 		}
+
 		let _animationSpeed = 200
 		window.onSpeedChange = (value) => {
 			_animationSpeed = 500 - (50 * value)	
@@ -279,39 +281,39 @@ function interpRgb(a,b,p){
 			let max = Math.max;
 			function ticked() {
 				link_all
-				.attr("x1", function(d) { return d.source.x; })
-				.attr("y1", function(d) { return d.source.y; })
-				.attr("x2", function(d) { return d.target.x; })
-				.attr("y2", function(d) { return d.target.y; });
+					.attr("x1", function(d) { return d.source.x; })
+					.attr("y1", function(d) { return d.source.y; })
+					.attr("x2", function(d) { return d.target.x; })
+					.attr("y2", function(d) { return d.target.y; });
 				
 				node_all
-				.attr("cx", function(d) { return d.x; })
-				.attr("cy", function(d) { return d.y; })
-				.attr("fill",function(d){
-					let now = Date.now();
-					let elapsed = max(min((now - d.lastChange)/visDuration,1),0);
-					if(isNaN(elapsed)){
-						return d.lastFill;
-					}
-					if(elapsed < 1){
-						// console.log("interp",interpRgb(d.lastFill,d.targetFill,elapsed));                        
-					}
-					if(elapsed === 1){
-						d.lastFill = d.targetFill;
-					}
-					return interpRgb(d.lastFill,d.targetFill,elapsed);
-				})
-				.attr("r",function(d){
-					let now = Date.now();
-					let elapsed = max(min((now - d.lastChange)/visDuration,1),0);
-					if(isNaN(elapsed)){
-						return 5;
-					}
-					if(elapsed === 1){
-						return 5;
-					}
-					return interpFloat(15,5,elapsed);
-				});
+					.attr("cx", function(d) { return d.x; })
+					.attr("cy", function(d) { return d.y; })
+					.attr("fill",function(d){
+						let now = Date.now();
+						let elapsed = max(min((now - d.lastChange)/visDuration,1),0);
+						if(isNaN(elapsed)){
+							return d.lastFill;
+						}
+						if(elapsed < 1){
+							// console.log("interp",interpRgb(d.lastFill,d.targetFill,elapsed));                        
+						}
+						if(elapsed === 1){
+							d.lastFill = d.targetFill;
+						}
+						return interpRgb(d.lastFill,d.targetFill,elapsed);
+					})
+					.attr("r",function(d){
+						let now = Date.now();
+						let elapsed = max(min((now - d.lastChange)/visDuration,1),0);
+						if(isNaN(elapsed)){
+							return 5;
+						}
+						if(elapsed === 1){
+							return 5;
+						}
+						return interpFloat(15,5,elapsed);
+					});
 			}
 			
 		}
