@@ -158,7 +158,6 @@ function interpRgb(a,b,p){
 			d.fy = null;
 		}
 		
-		
 		let TimeLapse = { pause: false }
 		window.resume = () => {
 			if(TimeLapse.pause){
@@ -191,6 +190,7 @@ function interpRgb(a,b,p){
 			if(i < times.length - 1){
 				setTimeout(function(){
 					loop(i+1);
+
 				},_animationSpeed);
 			}
 		};
@@ -239,11 +239,13 @@ function interpRgb(a,b,p){
 			.append("circle")
 			.attr("r", 5)
 			.attr("fill", d => {
+
 				// console.log("On enter, d", nodeColor(d));
 				d.targetFill = nodeColor(d);
 				d.lastFill = d.targetFill;
 				d.lastChange = -Infinity;
 				// console.log(d);
+
 				return d.targetFill;
 			})
 			.call(d3.drag()
