@@ -4,69 +4,19 @@
         <meta charset="utf-8">
         <title>Hello World</title>
         <link rel="stylesheet" href="https://unpkg.com/mustard-ui@latest/dist/css/mustard-ui.min.css" /> 
+        <link rel="stylesheet" href="./assets/style.css" />
         <script src="https://d3js.org/d3.v5.js"></script>
         <script src="bundle.js"></script>
     </head>
-    <style>
-      .slider {
-        -webkit-appearance: none;  /* Override default CSS styles */
-        appearance: none;
-        width: 100%; /* Full-width */
-        height: 15px; /* Specified height */
-        border-radius: 5px;
-        background: #d3d3d3; /* Grey background */
-        outline: none; /* Remove outline */
-        opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
-        -webkit-transition: .2s; /* 0.2 seconds transition on hover */
-        transition: opacity .2s;
-      }
-      .slider::-webkit-slider-thumb {
-        -webkit-appearance: none;
-        appearance: none;
-        width: 25px;
-        height: 25px;
-        border-radius: 50%; 
-        background: #4CAF50;
-        cursor: pointer;
-      }
-
-      .slider::-moz-range-thumb {
-        width: 25px;
-        height: 25px;
-        border-radius: 50%;
-        background: #4CAF50;
-        cursor: pointer;
-      }
-      .buttonContainer, .slideContainer {
-        width: 300px;
-        padding: 5px;
-      }
-      
-      .row {
-        display: flex;
-        flex-direction: row;
-        justify-content: flex-start;
-      }
-      #viz { 
-        border: black 1px solid;
-      }
-      #play {
-        display: none;
-      }
-      .speedLabel {
-        padding-top: 5px;
-        font-weight: bold;
-      }
-    </style>
     <body>
       <svg id="viz" width="960" height="600"></svg>
       <div class="row" >
         <div class='buttonContainer'>
           <button id='pause' class='button-danger' onClick='window.pause()'> 
-            <img src='./images/pause-white.png' height='36px' />
+            <img src='./assets/images/pause-white.png' height='36px' />
           </button>
           <button id='play' class='button-primary' onClick='window.resume()'> 
-            <img src='./images/play-white.png' height='36px' />
+            <img src='./assets/images/play-white.png' height='36px' />
           </button>
         </div>
         <div class='speedLabel'>

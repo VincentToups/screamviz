@@ -1,4 +1,4 @@
-var puff = require("./puff.js");
+var puff = require("./lib/puff.js");
 var Promise = require("bluebird");
 puff.pollute(window);
 
@@ -17,7 +17,7 @@ var maxTime = -Infinity;
 var visDuration = 2000;
 
 function promiseData(){
-	return d3.csv("./result.csv",function(row){
+	return d3.csv("./data/result.csv",function(row){
 		let out = {};
 		Object.keys(row).forEach(k => {
 			let asNumber = +row[k];

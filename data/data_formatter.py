@@ -19,7 +19,7 @@ def generateRoleEvent(dataframe, node, target, time):
   return dataframe.append({'Node':node, 'Event':'Role', 'Target': target, 'Time':time}, ignore_index=True)
 
 # Read from CSV
-d = pd.read_csv('./doc/sample_scream_output.csv')
+d = pd.read_csv('../doc/sample_scream_output.csv')
 # Trim white space in column names.  Not optimized
 for i in range(d.columns.size):
   d = d.rename(columns={d.columns[i]: d.columns[i].strip()})
