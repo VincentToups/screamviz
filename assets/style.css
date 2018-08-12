@@ -9,15 +9,15 @@
   flex-direction: row;
   justify-content: flex-start;
 }
-#viz { 
-  border: black 1px solid;
-}
 #play {
   display: none;
 }
 .speedLabel {
   padding-top: 5px;
   font-weight: bold;
+}
+svg {
+  background: #333;
 }
 
 /******* SLIDER **********/

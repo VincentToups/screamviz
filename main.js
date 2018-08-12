@@ -1,7 +1,31 @@
-var puff = require("./lib/puff.js");
 var Promise = require("bluebird");
+var ColorScheme = require("color-scheme");
+var puff = require("./lib/puff.js");
+var hexToRGB = require('./lib/hexToRGB')
 puff.pollute(window);
 
+var scheme1 = new ColorScheme;
+var scheme2 = new ColorScheme;
+var scheme3 = new ColorScheme;
+var scheme4 = new ColorScheme;
+// each scheme only produces 12 colors :(
+scheme1.from_hue(8)
+  .scheme('tetrade')
+  .variation('soft');
+scheme2.from_hue(42)
+  .scheme('tetrade')
+  .variation('light');
+scheme3.from_hue(16)
+  .scheme('tetrade')
+  .variation('pastel');
+var colors1 = scheme1.colors();
+var colors2 = scheme2.colors();
+var colors3 = scheme3.colors();
+console.log('Colors1', colors1)
+console.log('Colors2', colors2)
+console.log('Colors3', colors3)
+var colors = colors1.concat(colors2).concat(colors3)
+// colors.length => 48
 function promiseDOM(){
 	return new Promise((res,rej)=>{
 		document.addEventListener("DOMContentLoaded",_=>res(document));
@@ -84,7 +108,7 @@ function r255(){
 }
 
 function randomRgb(){
-	return "rgb("+[r255(),r255(),r255()]+")";
+	return "rgb("+ hexToRGB(colors.pop())+")";
 }
 
 function parseRgb(rgb){
@@ -117,9 +141,11 @@ function interpRgb(a,b,p){
 		console.log(data);
 		const roles = Object.keys(rolesTable).sort();
 		const communities = Object.keys(communityTable).sort();
-		const communityColors = {};
-		communities.forEach(c => communityColors[c]=randomRgb());
-		communityColors["none"] = "rgb(0,0,0)";
+    const communityColors = {};
+
+
+		communities.forEach((c, i) => communityColors[c]=randomRgb());
+		communityColors["none"] = "rgb(255,255,255)";
 		const nodes = Object.keys(nodesTable).map(_=>+_).sort(numerically);
 		const byTime = groupBy(data,ixc("row"));
 		console.log(byTime);
@@ -225,7 +251,7 @@ function interpRgb(a,b,p){
 				n2.lastChange = Date.now();
 				return 1;
 			})
-			.attr("stroke","rgba(80,80,80,0.3)");
+			.attr("stroke","rgba(57,255,20,0.3)");
 			
 			var link_all = link.merge(link_enter);
 			
@@ -254,7 +280,7 @@ function interpRgb(a,b,p){
 				let newNodeColor = nodeColor(d);
 				// console.log(newNodeColor,d.lastFill);
 				if(d.targetFill !== newNodeColor){
-					console.log("targetFill Changed",newNodeColor);
+					// console.log("targetFill Changed",newNodeColor);
 					d.lastFill = d.targetFill;
 					d.targetFill = newNodeColor;
 					d.lastChange = Date.now();
@@ -337,7 +363,7 @@ function interpRgb(a,b,p){
 				community: e => {
 					console.log()
 					let i = node_index_map[e.node];
-					if(node_data[i].community !== e.target) console.log("Community changed", e.target, 'Row', i);
+					// if(node_data[i].community !== e.target) console.log("Community changed", e.target, 'Row', i);
 					node_data[i].community = e.target;
 				},
 				role: e => {
