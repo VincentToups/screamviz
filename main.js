@@ -161,11 +161,15 @@ function interpRgb(a,b,p){
 				console.log('Play', TimeLapse.iteration)
 				TimeLapse.pause = false
 				loop(TimeLapse.iteration)
+				document.getElementById('play').style.display = 'none'
+				document.getElementById('pause').style.display = 'block'
 			}
 		}
 
 		window.pause = () => {
 			TimeLapse.pause = true
+			document.getElementById('pause').style.display = 'none'
+			document.getElementById('play').style.display = 'block'
 		}
 
 		window.onSpeedChange = (value) => {
@@ -221,7 +225,7 @@ function interpRgb(a,b,p){
 				n2.lastChange = Date.now();
 				return 1;
 			})
-			.attr("stroke","black");
+			.attr("stroke","rgba(80,80,80,0.3)");
 			
 			var link_all = link.merge(link_enter);
 			
@@ -333,7 +337,7 @@ function interpRgb(a,b,p){
 				community: e => {
 					console.log()
 					let i = node_index_map[e.node];
-					if(node_data[i].community !== e.target) console.log("Community change",node_data[i],e.target);
+					if(node_data[i].community !== e.target) console.log("Community changed", e.target, 'Row', i);
 					node_data[i].community = e.target;
 				},
 				role: e => {
