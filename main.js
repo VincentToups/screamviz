@@ -1,31 +1,8 @@
 var Promise = require("bluebird");
-var ColorScheme = require("color-scheme");
 var puff = require("./lib/puff.js");
-var hexToRGB = require('./lib/hexToRGB')
+var colors = require('./lib/colorsGenerator')
 puff.pollute(window);
 
-var scheme1 = new ColorScheme;
-var scheme2 = new ColorScheme;
-var scheme3 = new ColorScheme;
-var scheme4 = new ColorScheme;
-// each scheme only produces 12 colors :(
-scheme1.from_hue(8)
-  .scheme('tetrade')
-  .variation('soft');
-scheme2.from_hue(42)
-  .scheme('tetrade')
-  .variation('light');
-scheme3.from_hue(16)
-  .scheme('tetrade')
-  .variation('pastel');
-var colors1 = scheme1.colors();
-var colors2 = scheme2.colors();
-var colors3 = scheme3.colors();
-console.log('Colors1', colors1)
-console.log('Colors2', colors2)
-console.log('Colors3', colors3)
-var colors = colors1.concat(colors2).concat(colors3)
-// colors.length => 48
 function promiseDOM(){
 	return new Promise((res,rej)=>{
 		document.addEventListener("DOMContentLoaded",_=>res(document));
@@ -108,7 +85,7 @@ function r255(){
 }
 
 function randomRgb(){
-	return "rgb("+ hexToRGB(colors.pop())+")";
+	return "rgb("+ colors.pop() +")";
 }
 
 function parseRgb(rgb){
@@ -261,7 +238,10 @@ function interpRgb(a,b,p){
 			var node_enter = node
 			.enter()
 			.append("circle")
-			.attr("r", 5)
+      .attr("r", 5)
+      .attr("class", d => { 
+        console.log(d)
+        return d.community})
 			.attr("fill", d => {
 				// console.log("On enter, d", nodeColor(d));
 				d.targetFill = nodeColor(d);
