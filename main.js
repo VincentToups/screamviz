@@ -1,12 +1,12 @@
 var Promise = require("bluebird");
 var puff = require("./lib/puff.js");
-var colors = require('./lib/colorsGenerator')
+var colors = require('./lib/colorsGenerator.js');
 puff.pollute(window);
 
 function promiseDOM(){
-	return new Promise((res,rej)=>{
-		document.addEventListener("DOMContentLoaded",_=>res(document));
-	});
+    return new Promise((res,rej)=>{
+        document.addEventListener("DOMContentLoaded",_=>res(document));
+    });
 }
 
 const rolesTable = {};
@@ -18,85 +18,85 @@ var maxTime = -Infinity;
 var visDuration = 2000;
 
 function promiseData(){
-	return d3.csv("./data/result.csv",function(row){
-		let out = {};
-		Object.keys(row).forEach(k => {
-			let asNumber = +row[k];
-			if(typeof asNumber === "number" && !isNaN(asNumber)){
-				out[k.toLowerCase()] = asNumber;
-			} else {
-				out[k.toLowerCase()] = row[k].toLowerCase().trim();
-			}
-		});
-		if(out.event === "role"){
-			if(out.target){
-				out.target = out.target.replace("role_","");
-				rolesTable[out.target] = true;
-			} else {
-				debugger;
-			}
-		}
-		if(out.event === "community"){
-			if(out.target){
-				communityTable[out.target] = true;
-			} else {
-				debugger;
-			}
-		}
-		if(out.event === "add"){
-			nodesTable[out.node] = true;
-		}
-		if(out.event === "connect"){
-			nodesTable[out.target] = true;
-		}
-		if(out.time < minTime) minTime = out.time;
-		if(out.time > maxTime) maxTime = out.time;
-		return out;
-	});
+    return d3.csv("./data/result.csv",function(row){
+        let out = {};
+        Object.keys(row).forEach(k => {
+            let asNumber = +row[k];
+            if(typeof asNumber === "number" && !isNaN(asNumber)){
+                out[k.toLowerCase()] = asNumber;
+            } else {
+                out[k.toLowerCase()] = row[k].toLowerCase().trim();
+            }
+        });
+        if(out.event === "role"){
+            if(out.target){
+                out.target = out.target.replace("role_","");
+                rolesTable[out.target] = true;
+            } else {
+                debugger;
+            }
+        }
+        if(out.event === "community"){
+            if(out.target){
+                communityTable[out.target] = true;
+            } else {
+                debugger;
+            }
+        }
+        if(out.event === "add"){
+            nodesTable[out.node] = true;
+        }
+        if(out.event === "connect"){
+            nodesTable[out.target] = true;
+        }
+        if(out.time < minTime) minTime = out.time;
+        if(out.time > maxTime) maxTime = out.time;
+        return out;
+    });
 }
 
 function numerically(a,b){
-	return a-b;
+    return a-b;
 }
 
 function groupBy(data, key){
-	let out = {};
-	data.forEach(d => {
-		let lst = out[key(d)]||[];
-		lst.push(d);
-		out[key(d)] = lst;
-	});
-	return out;
+    let out = {};
+    data.forEach(d => {
+        let lst = out[key(d)]||[];
+        lst.push(d);
+        out[key(d)] = lst;
+    });
+    return out;
 }
 
 const eventOrderTable = {
-	add:0,
-	connect:1,
-	community:2,
-	role:3
+    add:0,
+    connect:1,
+    community:2,
+    role:3
 };
 
 function byEvent(a,b){
-	return eventOrderTable[a.event]-eventOrderTable[b.event];    
+    return eventOrderTable[a.event]-eventOrderTable[b.event];    
 }
 
 function r255(){
-	return Math.floor(Math.random()*255);
+    return Math.floor(Math.random()*255);
 }
 
 function randomRgb(){
-	return "rgb("+ colors.pop() +")";
+    return "rgb("+[r255(),r255(),r255()]+")";
 }
 
 function parseRgb(rgb){
-	let p1 = rgb.split(",");
-	let p1p = p1[0].split("(");
-	let p3p = p1[2].split(")");
-	return [+p1p[1],+p1[1],+p3p[0]];
+    let p1 = rgb.split(",");
+    let p1p = p1[0].split("(");
+    let p3p = p1[2].split(")");
+    return [+p1p[1],+p1[1],+p3p[0]];
 }
 
 function unparseRgb(a){
-	return "rgb("+a.join(",")+")";
+    return "rgb("+a.join(",")+")";
 }
 
 function interpRgb(a,b,p){
@@ -291,9 +291,12 @@ function interpRgb(a,b,p){
 					.attr("y2", function(d) { return d.target.y; });
 				
 				node_all
-					.attr("cx", function(d) { return d.x; })
-					.attr("cy", function(d) { return d.y; })
-					.attr("fill",function(d){
+				.attr("cx", function(d) {
+                                    return d.x; })
+				.attr("cy", function(d) {
+                                    return d.y;
+                                })
+				.attr("fill",function(d){
 						let now = Date.now();
 						let elapsed = max(min((now - d.lastChange)/visDuration,1),0);
 						if(isNaN(elapsed)){
