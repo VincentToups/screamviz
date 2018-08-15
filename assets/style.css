@@ -16,8 +16,14 @@
   padding-top: 5px;
   font-weight: bold;
 }
+button.button-danger {
+  background: tomato;
+}
 svg {
   background: #333;
+}
+body {
+  background: #ddd;
 }
 
 /******* SLIDER **********/
@@ -27,7 +33,7 @@ svg {
   width: 100%;
   height: 15px;
   border-radius: 5px;
-  background: #d3d3d3;
+  background: #222;
   outline: none;
   opacity: 0.7;
   -webkit-transition: .2s;
@@ -36,11 +42,14 @@ svg {
 .slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 25px;
-  height: 25px;
+  width: 40px;
+  height: 40px;
+  border: #33966e 10px inset;
+  box-shadow:  0px 5px 10px #0f0;
   border-radius: 50%; 
-  background: #4CAF50;
+  background: #fff;
   cursor: pointer;
+  transition: all 0.01s;
 }
 
 .slider::-moz-range-thumb {
