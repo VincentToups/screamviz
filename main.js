@@ -127,8 +127,8 @@ Promise.all([promiseDOM(),promiseData()])
 		const byTime = groupBy(data,ixc("row"));
 		console.log(byTime);
 		const svg = d3.select("#viz");
-		const width = svg.attr("width");
-		const height = svg.attr("height");
+		const width = +svg.attr("width");
+		const height = +svg.attr("height");
 		
 		
 		var node_data = [];
@@ -292,8 +292,14 @@ Promise.all([promiseDOM(),promiseData()])
 				
 				node_all
 					.attr("cx", function(d) {
+						if(d.x > width || d.x < 0) d.vx = -d.vx;
+						if(d.x > width) d.x = width;
+						if(d.x < 0) d.x = 0;
 						return d.x; })
 					.attr("cy", function(d) {
+						if(d.y > height || d.y < 0) d.vy = -d.vy;
+						if(d.y > height) d.y = height;
+						if(d.y < 0) d.y = 0;
 						return d.y;
 					})
 					.attr("fill",function(d){
